@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2b6cb0"/>
+      <stop offset="1" stop-color="#38b2ac"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="6" width="56" height="52" rx="10" fill="url(#g)"/>
+  <!-- 摊开的两页 -->
+  <path d="M32 20c-5-3-11-4-16-4v30c5 0 11 1 16 4 5-3 11-4 16-4V16c-5 0-11 1-16 4z" fill="#e6fffa" opacity="0.94"/>
+  <path d="M32 20v30" stroke="#2b6cb0" stroke-width="2" opacity="0.5"/>
+  <path d="M22 27h6M22 33h6M22 39h4" stroke="#2b6cb0" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M36 27h6M36 33h6M36 39h4" stroke="#2b6cb0" stroke-width="2.2" stroke-linecap="round" opacity="0.55"/>
+</svg>

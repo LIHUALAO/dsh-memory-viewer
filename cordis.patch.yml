@@ -1,0 +1,4 @@
+- insert:
+    - id: memory-viewer
+      name: dsh-memory-viewer
+      config: {}

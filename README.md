@@ -104,6 +104,7 @@ GET /plugins/memory-viewer/api/info            → { root, created, missing }
 ## 测试
 
 ```powershell
+node test/manifest.mjs       # 清单与编码 20 项：BOM、必需字段、exports、第三方 import
 node test/host.mjs           # Host 端 42 项：路由、模板铺开、路径安全、工具、服务缺失容错
 node test/client-load.mjs    # Client 端 46 项：模块注册、factory、slot、locale、位置夹取
 node test/error-state.mjs    # 面板错误态 28 项：读失败/重试/换本/reveal 失败/非 JSON 响应
@@ -112,7 +113,7 @@ node test/hang-isolate.mjs   # 死循环隔离（子进程 + 超时）
 node test/xss-probe.mjs      # XSS 与 key 唯一性
 ```
 
-全部在临时目录里跑，不碰真实记忆。
+全部在临时目录里跑，不碰真实记忆。`npm run preflight` 跑前四个（改完代码最该先跑的四个）。
 
 `error-state.mjs` 里有个最小 React + 可编排 fetch，能真的跑 effect、真的重渲染。
 它验证的是「屏幕上到底显示了什么」，不是「代码里有没有那句话」——
@@ -124,6 +125,28 @@ node test/xss-probe.mjs      # XSS 与 key 唯一性
 $env:MV_CLIENT = '_backups/旧版/lib/client.js'
 node test/error-state.mjs   # 旧版会在这里挂掉 12 项
 ```
+
+### 为什么非要一个 manifest 测试
+
+`package.json` 开头多一个 U+FEFF，插件就会**静默消失**，而且不会留下任何日志：
+
+```
+带 BOM 的 package.json
+→ dsh-app-boot readManifest() 裸 JSON.parse(readFileSync(f,'utf8'))    抛 SyntaxError
+→ 同一个函数里的 denial() catch 住，说成「声明要求无法校验」
+→ deny() 给这行打上 disabled = true —— 只在内存里，从不写回 cordis.patch.yml
+→ cordis-plugin-loader 的 Entry#update() 见 disabled 就直接 dispose + return
+→ 永不 init，路由没注册，/api/* 全 404，fiberPhase 是 null，crash 日志一条没有
+```
+
+表现就是「插件明明装着，可是不见了」，配置文件里还查不到任何 `disabled: true`。
+这个坑踩过两次，`manifest.mjs` 就是为它写的：把所有文本文件的头三个字节翻一遍。
+
+顺带拦住另外两类：**重写 `package.json` 时漏字段**（少了 `main` / `exports` / `dsh.client`
+插件直接变空壳，但 JSON 完全合法，不会报错），以及**手滑 import 了第三方包**
+（符号链接 realpath 之后找不到 `node_modules`，冷启动整个 GUI 起不来）。
+
+这三条都做过故障注入回放，确认测试真的会红。
 
 ### 冷启动预演
 

@@ -1,53 +1,53 @@
-﻿{
-    "name":  "dsh-memory-viewer",
-    "displayName":  "记忆本子浏览器",
-    "description":  "把每一个 DS 会话留下的记忆本子列出来，左边挑一本，右边看它写了什么。",
-    "version":  "1.0.0",
-    "keywords":  [
-                     "dsh-plugin",
-                     "deepseek-harness",
-                     "memory",
-                     "viewer",
-                     "markdown"
-                 ],
-    "type":  "module",
-    "main":  "lib/index.js",
-    "exports":  {
-                    ".":  "./lib/index.js",
-                    "./client":  "./lib/client.js",
-                    "./locale/*.json":  "./locale/*.json",
-                    "./icon":  "./icon.svg",
-                    "./cordis.patch.yml":  "./cordis.patch.yml",
-                    "./package.json":  "./package.json"
-                },
-    "files":  [
-                  "lib",
-                  "template",
-                  "locale/*.json",
-                  "icon.svg",
-                  "cordis.patch.yml",
-                  "README.md",
-                  "LICENSE",
-                  "memories"
-              ],
-    "license":  "MIT",
-    "engines":  {
-                    "node":  "^22.19.0 || \u003e=24.0.0"
-                },
-    "peerDependencies":  {
-                             "@deepseek-ai/cordis":  "^4.0.5"
-                         },
-    "peerDependenciesMeta":  {
-                                 "@deepseek-ai/cordis":  {
-                                                             "optional":  true
-                                                         }
-                             },
-    "dsh":  {
-                "bundle":  {
-                               "patch":  "./cordis.patch.yml"
-                           },
-                "client":  {
-                               "platform":  "web"
-                           }
-            }
+{
+  "name": "dsh-memory-viewer",
+  "displayName": "记忆本子浏览器",
+  "description": "把每一个 DS 会话留下的记忆本子列出来，左边挑一本，右边看它写了什么。",
+  "version": "1.0.1",
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "memory",
+    "viewer",
+    "markdown"
+  ],
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "template",
+    "locale/*.json",
+    "icon.svg",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE",
+    "memories"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.5"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/cordis": {
+      "optional": true
+    }
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  }
 }

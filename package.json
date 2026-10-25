@@ -30,6 +30,10 @@
     "LICENSE",
     "memories"
   ],
+  "scripts": {
+    "preflight": "node test/manifest.mjs && node test/host.mjs && node test/client-load.mjs && node test/error-state.mjs",
+    "test": "node test/host.mjs && node test/client-load.mjs && node test/error-state.mjs && node test/render-check.mjs && node test/xss-probe.mjs && node test/manifest.mjs"
+  },
   "license": "MIT",
   "engines": {
     "node": "^22.19.0 || >=24.0.0"

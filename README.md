@@ -24,12 +24,24 @@
 
 ## 界面
 
-- **侧边栏图标** → 点开是全局面板
-- **设置页** → 同上面板，找不到图标时的备选入口
-- 左栏：所有本子，按最后改动时间倒序，每条带大小、时间和第一句摘要
+- **右下角浮动图标** → 点开是全局面板，可以拖动，位置记在 localStorage
+- 左栏：所有本子，**按目录分组**，每组标题右侧 hover 出现「打开文件夹」
 - 右栏：markdown 正文，支持标题 / 段落 / 列表 / 引用 / 分隔线 / 代码块 / 粗体 / 斜体 / 行内代码
 
 主题跟随宿主，只用 `--dsw-alias-*` token，不写死颜色。
+
+### 三态错误处理（别把它们混成一个 `err`）
+
+面板里同时存在三种互不相干的失败，各自有各自的归宿：
+
+| 失败 | 落到哪 | 为什么 |
+|---|---|---|
+| 列表加载失败 | 整页错误页 + 重读按钮 | 没东西可显示 |
+| **某一本读失败** | 只顶掉右栏，带原因 + 「再试一次」 | 左栏列表还在，别一起消失 |
+| 打开文件夹失败 | 左栏底部飘一行 | 跟正文毫无关系 |
+
+上一版三种共用同一个 `err`，而渲染只看 `doc` / `active`，结果「读失败」时右栏永远停在
+「正在翻…」——**`setErr` 确实被调用了，只是没人渲染它**。测试见 `test/error-state.mjs`。
 
 ## 配置
 
@@ -92,14 +104,26 @@ GET /plugins/memory-viewer/api/info            → { root, created, missing }
 ## 测试
 
 ```powershell
-node test/host.mjs           # Host 端 31 项：路由、模板铺开、路径安全、工具、服务缺失容错
-node test/client-load.mjs    # Client 端 15 项：模块注册、factory、slot、locale
+node test/host.mjs           # Host 端 42 项：路由、模板铺开、路径安全、工具、服务缺失容错
+node test/client-load.mjs    # Client 端 46 项：模块注册、factory、slot、locale、位置夹取
+node test/error-state.mjs    # 面板错误态 28 项：读失败/重试/换本/reveal 失败/非 JSON 响应
 node test/render-check.mjs   # 渲染器 50 条用例
 node test/hang-isolate.mjs   # 死循环隔离（子进程 + 超时）
 node test/xss-probe.mjs      # XSS 与 key 唯一性
 ```
 
 全部在临时目录里跑，不碰真实记忆。
+
+`error-state.mjs` 里有个最小 React + 可编排 fetch，能真的跑 effect、真的重渲染。
+它验证的是「屏幕上到底显示了什么」，不是「代码里有没有那句话」——
+两条失败路径都是这么漏过去的：`setErr` 被调用了，但没人渲染它。
+
+可以拿它回放旧版本，确认测试本身没骗人：
+
+```powershell
+$env:MV_CLIENT = '_backups/旧版/lib/client.js'
+node test/error-state.mjs   # 旧版会在这里挂掉 12 项
+```
 
 ### 冷启动预演
 
